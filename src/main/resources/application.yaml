@@ -1,10 +1,21 @@
 server:
   port: 9090
+  ssl:
+    key-store: classpath:cert-chain.p12
+    key-store-password: root@2580
+    keyStoreType: PKCS12
+    #keyAlias: tomcat
 spring:
   application:
     name: SALEX-API-GATEWAY-SERVICE
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: ROUTE-A
           uri: http://localhost:8081
