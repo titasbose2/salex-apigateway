@@ -21,11 +21,17 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/v1/**
+          filters:
+            - name: CacheRequestBody
         - id: ROUTE-B
           uri: http://localhost:8082
           predicates:
             - Path=/v1/**
+          filters:
+            - name: CacheRequestBody
         - id: ROUTE-C
           uri: http://localhost:8083
           predicates:
             - Path=/v1/**
+          filters:
+            - name: CacheRequestBody

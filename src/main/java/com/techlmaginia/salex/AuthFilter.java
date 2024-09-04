@@ -3,6 +3,8 @@ package com.techlmaginia.salex;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -11,7 +13,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.BadPaddingException;
@@ -27,6 +32,8 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static com.techlmaginia.salex.AuthController.authToken;
@@ -34,29 +41,26 @@ import static com.techlmaginia.salex.AuthController.authToken;
 @Configuration
 @Slf4j
 public class AuthFilter implements GlobalFilter, Ordered {
+
     @Bean
     public GlobalFilter customFilter() {
+
         return new AuthFilter();
     }
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
-        String reqHeader="Request Header ==> "+
-                exchange.getRequest().getRemoteAddress()+" referred by "+
-                exchange.getRequest().getHeaders().get("X-Requested-With")+" to "
-        +exchange.getRequest().getURI()+" Request : ";
-
-         exchange.getRequest().getBody().collectList()
-                .subscribe(
-                        addressList -> addressList.stream().map(i-> new BufferedReader(new InputStreamReader(i.asInputStream()))
-                                .lines().collect(Collectors.joining("\n"))).toList().forEach(i->log.info(reqHeader+i)),
-                        error -> {},
-                        () -> {}
-                );
-
-
         //compareAuthKey(requestHeaders);
-        return chain.filter(exchange);
+        return chain.filter(exchange).then((Mono.fromRunnable(() -> {
+            String responseHeaders = exchange.getRequest().getHeaders().toSingleValueMap().toString();
+            HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
+            Object formData = exchange.getAttribute(ServerWebExchangeUtils.CACHED_REQUEST_BODY_ATTR);
+            String reqHeader="RequestAddress : "+
+                    exchange.getRequest().getRemoteAddress()+" ReferredBy : "+
+                    exchange.getRequest().getHeaders().get("X-Requested-With")+" URI : "
+                    +exchange.getRequest().getURI()+" Request : "+formData;
+            log.info(reqHeader);
+
+        })));
     }
 
     void compareAuthKey(HttpHeaders requestHeaders){
