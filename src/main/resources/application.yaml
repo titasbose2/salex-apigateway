@@ -35,3 +35,16 @@ spring:
             - Path=/v1/**
           filters:
             - name: CacheRequestBody
+
+        - id: ROUTE-D
+          uri: http://localhost:8081
+          predicates:
+            - Path=/file/**
+        - id: ROUTE-E
+          uri: http://localhost:8082
+          predicates:
+            - Path=/file/**
+        - id: ROUTE-F
+          uri: http://localhost:8083
+          predicates:
+            - Path=/file/**
