@@ -54,6 +54,9 @@ public class AuthFilter implements GlobalFilter, Ordered {
             String responseHeaders = exchange.getRequest().getHeaders().toSingleValueMap().toString();
             HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
             Object formData = exchange.getAttribute(ServerWebExchangeUtils.CACHED_REQUEST_BODY_ATTR);
+            if (formData!=null) {
+                formData = formData.toString().replace("\n", "").replace("\r", "");
+            }
             String reqHeader="RequestAddress : "+
                     exchange.getRequest().getRemoteAddress()+" ReferredBy : "+
                     exchange.getRequest().getHeaders().get("X-Requested-With")+" URI : "
