@@ -48,3 +48,17 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path=/file/**
+
+
+        - id: ROUTE-RECRUTINOW-A
+          uri: http://localhost:8091
+          predicates:
+            - Path=/rn/**
+        - id: ROUTE-RECRUTINOW-B
+          uri: http://localhost:8092
+          predicates:
+            - Path=/rn/**
+        - id: ROUTE-RECRUTINOW-C
+          uri: http://localhost:8093
+          predicates:
+            - Path=/rn/**
