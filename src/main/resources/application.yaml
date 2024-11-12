@@ -2,7 +2,7 @@ server:
   port: 9090
   ssl:
     key-store: classpath:cert-chain.p12
-    key-store-password: root@2580
+    key-store-password: root@0921
     keyStoreType: PKCS12
     #keyAlias: tomcat
 spring:
