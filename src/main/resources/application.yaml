@@ -2,14 +2,22 @@ server:
   port: 9090
   ssl:
     key-store: classpath:cert-chain.p12
-    key-store-password: root@0921
+    key-store-password: root@2580
     keyStoreType: PKCS12
     #keyAlias: tomcat
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 spring:
   application:
     name: SALEX-API-GATEWAY-SERVICE
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
       globalcors:
         cors-configurations:
           '[/**]':
@@ -17,19 +25,19 @@ spring:
             allowedMethods: "*"
             allowedHeaders: "*"
       routes:
-        - id: ROUTE-A
+        - id: ROUTE-XDIL
           uri: http://localhost:8081
           predicates:
             - Path=/v1/**
           filters:
             - name: CacheRequestBody
-        - id: ROUTE-B
+        - id: ROUTE-XDIL
           uri: http://localhost:8082
           predicates:
             - Path=/v1/**
           filters:
             - name: CacheRequestBody
-        - id: ROUTE-C
+        - id: ROUTE-XDIL
           uri: http://localhost:8083
           predicates:
             - Path=/v1/**
@@ -50,15 +58,15 @@ spring:
             - Path=/file/**
 
 
-        - id: ROUTE-RECRUTINOW-A
+        - id: ROUTE-RECRUTINOW
           uri: http://localhost:8091
           predicates:
             - Path=/rn/**
-        - id: ROUTE-RECRUTINOW-B
+        - id: ROUTE-RECRUTINOW
           uri: http://localhost:8092
           predicates:
             - Path=/rn/**
-        - id: ROUTE-RECRUTINOW-C
+        - id: ROUTE-RECRUTINOW
           uri: http://localhost:8093
           predicates:
             - Path=/rn/**
